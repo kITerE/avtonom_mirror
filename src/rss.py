@@ -10,7 +10,7 @@ def get_raw():
     return r.text
 
 
-Item = namedtuple('Item', ('title', 'link', 'description', 'image'))
+Item = namedtuple('Item', ('title', 'link', 'description', 'media'))
 
 
 def iterate_items():
@@ -19,10 +19,13 @@ def iterate_items():
             for channel_child in root_child:
                 if channel_child.tag == 'item':
                     as_dict = {i.tag: i for i in channel_child}
-                    enclosure = as_dict.get('enclosure')
+
+                    media = []
+                    if 'enclosure' in as_dict:
+                        media.append(as_dict['enclosure'].attrib.get('url'))
+
                     yield Item(as_dict['title'].text, as_dict['link'].text,
-                               as_dict['description'].text.strip(),
-                               as_dict['enclosure'].attrib.get('url') if 'enclosure' in as_dict else None)
+                               as_dict['description'].text.strip(), media)
             break
 
 
@@ -32,3 +35,11 @@ def iterate_new_items(db):
             continue
         yield item
         db[item.link] = True
+
+
+def item_to_html(item):
+    p = ET.Element('p')
+    a = ET.SubElement(p, 'a')
+    a.attrib.update(href=item.link)
+    a.text = item.title
+    return ET.tostring(p, encoding="unicode") + item.description

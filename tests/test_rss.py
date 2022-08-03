@@ -62,29 +62,29 @@ def test_iterate_description(get_raw_mock):
     assert items[1].description[-100:] == """twitter-timeline-link" href="https://bristolabc.org/riptaylor/" rel="nofollow">Источник</a></em></p>"""
 
 
-def test_iterate_image(get_raw_mock):
-    titles = [i.image for i in rss.iterate_items()]
+def test_iterate_media(get_raw_mock):
+    titles = [i.media for i in rss.iterate_items()]
     assert titles == [
-        'https://avtonom.org/sites/default/files/store/poster2022_ru-780x1103.png',
-        'https://avtonom.org/sites/default/files/store/taylor-768x1024.jpeg',
-        'https://avtonom.org/sites/default/files/store/20220731_221430_0.jpg',
-        'https://avtonom.org/sites/default/files/store/20220731_184703.jpg',
-        'https://avtonom.org/sites/default/files/store/starship.png',
-        'https://avtonom.org/sites/default/files/store/fiar_rus.jpg',
-        'https://avtonom.org/sites/default/files/store/content_1.jpeg',
-        'https://avtonom.org/sites/default/files/store/fb_img_1658957390897_1.jpg',
-        'https://avtonom.org/sites/default/files/store/tur_anarch.jpeg',
-        'https://avtonom.org/sites/default/files/store/20220728_192615.jpg',
-        'https://avtonom.org/sites/default/files/store/photo_2022-04-13_16-32-03_0.jpg',
-        'https://avtonom.org/sites/default/files/store/20220728_125837.jpg',
-        'https://avtonom.org/sites/default/files/store/20220726_221640.jpg',
-        'https://avtonom.org/sites/default/files/store/wrench.jpg',
-        'https://avtonom.org/sites/default/files/store/20220723_164055.jpg',
-        'https://avtonom.org/sites/default/files/store/20220722_200142.jpg',
-        'https://avtonom.org/sites/default/files/store/20220722_174617.jpg',
-        'https://avtonom.org/sites/default/files/store/20220719_191947.jpg',
-        'https://avtonom.org/sites/default/files/store/photo_2022-02-19_13-03-31_0.jpg',
-        'https://avtonom.org/sites/default/files/store/20220718_172606_0.jpg',
+        ['https://avtonom.org/sites/default/files/store/poster2022_ru-780x1103.png'],
+        ['https://avtonom.org/sites/default/files/store/taylor-768x1024.jpeg'],
+        ['https://avtonom.org/sites/default/files/store/20220731_221430_0.jpg'],
+        ['https://avtonom.org/sites/default/files/store/20220731_184703.jpg'],
+        ['https://avtonom.org/sites/default/files/store/starship.png'],
+        ['https://avtonom.org/sites/default/files/store/fiar_rus.jpg'],
+        ['https://avtonom.org/sites/default/files/store/content_1.jpeg'],
+        ['https://avtonom.org/sites/default/files/store/fb_img_1658957390897_1.jpg'],
+        ['https://avtonom.org/sites/default/files/store/tur_anarch.jpeg'],
+        ['https://avtonom.org/sites/default/files/store/20220728_192615.jpg'],
+        ['https://avtonom.org/sites/default/files/store/photo_2022-04-13_16-32-03_0.jpg'],
+        ['https://avtonom.org/sites/default/files/store/20220728_125837.jpg'],
+        ['https://avtonom.org/sites/default/files/store/20220726_221640.jpg'],
+        ['https://avtonom.org/sites/default/files/store/wrench.jpg'],
+        ['https://avtonom.org/sites/default/files/store/20220723_164055.jpg'],
+        ['https://avtonom.org/sites/default/files/store/20220722_200142.jpg'],
+        ['https://avtonom.org/sites/default/files/store/20220722_174617.jpg'],
+        ['https://avtonom.org/sites/default/files/store/20220719_191947.jpg'],
+        ['https://avtonom.org/sites/default/files/store/photo_2022-02-19_13-03-31_0.jpg'],
+        ['https://avtonom.org/sites/default/files/store/20220718_172606_0.jpg'],
     ]
 
 
@@ -103,3 +103,8 @@ def test_iterate_new_items(get_raw_mock):
         'https://avtonom.org/news/poka-vse-ne-budut-svobodny-mezhdunarodnaya-nedelya-solidarnosti-s-zaklyuchennymi-anarhistami-23',
         'https://avtonom.org/news/petr-ryabov-rossiyskie-anarhisty-v-2000-2015-godah',
     ]
+
+
+def test_item_to_html():
+    item = rss.Item('My Title', 'http://127.0.0.1/', '<p>Hello</p>', [])
+    assert rss.item_to_html(item) == '<p><a href="http://127.0.0.1/">My Title</a></p><p>Hello</p>'
