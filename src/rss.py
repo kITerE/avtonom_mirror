@@ -1,3 +1,5 @@
+import sys
+import traceback
 import requests
 import xml.etree.ElementTree as ET
 
@@ -29,12 +31,17 @@ def iterate_items():
             break
 
 
-def iterate_new_items(db):
+def process_new_items(db, fn):
     for item in iterate_items():
-        if db.get(item.link):
-            continue
-        yield item
-        db[item.link] = True
+        if not db.get(item.link):
+            try:
+                fn(item)
+            except:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                traceback.print_exception(exc_type, exc_value, exc_traceback, file=sys.stdout)
+                print(item)
+            else:
+                db[item.link] = True
 
 
 def item_to_html(item):

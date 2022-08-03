@@ -28,8 +28,8 @@ def test_iterate_title(get_raw_mock):
 
 
 def test_iterate_link(get_raw_mock):
-    titles = [i.link for i in rss.iterate_items()]
-    assert titles == [
+    links = [i.link for i in rss.iterate_items()]
+    assert links == [
         'https://avtonom.org/news/poka-vse-ne-budut-svobodny-mezhdunarodnaya-nedelya-solidarnosti-s-zaklyuchennymi-anarhistami-23',
         'https://avtonom.org/freenews/achk-bristol-rip-teylor-yarost-nashe-oruzhie',
         'https://avtonom.org/news/aleksandra-skochilenko-ostanetsya-v-sizo-do-1-sentyabrya',
@@ -63,8 +63,8 @@ def test_iterate_description(get_raw_mock):
 
 
 def test_iterate_media(get_raw_mock):
-    titles = [i.media for i in rss.iterate_items()]
-    assert titles == [
+    media = [i.media for i in rss.iterate_items()]
+    assert media == [
         ['https://avtonom.org/sites/default/files/store/poster2022_ru-780x1103.png'],
         ['https://avtonom.org/sites/default/files/store/taylor-768x1024.jpeg'],
         ['https://avtonom.org/sites/default/files/store/20220731_221430_0.jpg'],
@@ -88,21 +88,68 @@ def test_iterate_media(get_raw_mock):
     ]
 
 
-def test_iterate_new_items(get_raw_mock):
+def test_process_new_items(get_raw_mock):
     db = {}
 
-    items = list(rss.iterate_new_items(db))
+    items = []
+    rss.process_new_items(db, lambda item: items.append(item))
     assert len(items) == 20
 
-    assert not list(rss.iterate_new_items(db))
+    items = []
+    rss.process_new_items(db, lambda item: items.append(item))
+    assert not items
 
     del db['https://avtonom.org/news/petr-ryabov-rossiyskie-anarhisty-v-2000-2015-godah']
     del db['https://avtonom.org/news/poka-vse-ne-budut-svobodny-mezhdunarodnaya-nedelya-solidarnosti-s-zaklyuchennymi-anarhistami-23']
-    titles = [i.link for i in rss.iterate_new_items(db)]
-    assert titles == [
+    links = []
+    rss.process_new_items(db, lambda item: links.append(item.link))
+    assert links == [
         'https://avtonom.org/news/poka-vse-ne-budut-svobodny-mezhdunarodnaya-nedelya-solidarnosti-s-zaklyuchennymi-anarhistami-23',
         'https://avtonom.org/news/petr-ryabov-rossiyskie-anarhisty-v-2000-2015-godah',
     ]
+
+
+def test_process_new_items_exception(get_raw_mock):
+    db = {}
+
+    links = []
+    def _do(item):
+        if item.link == 'https://avtonom.org/news/kirillu-ukraincevu-prodlen-arest':
+            raise RuntimeError()
+        links.append(item.link)
+    rss.process_new_items(db, _do)
+
+    assert links == [
+        'https://avtonom.org/news/poka-vse-ne-budut-svobodny-mezhdunarodnaya-nedelya-solidarnosti-s-zaklyuchennymi-anarhistami-23',
+        'https://avtonom.org/freenews/achk-bristol-rip-teylor-yarost-nashe-oruzhie',
+        'https://avtonom.org/news/aleksandra-skochilenko-ostanetsya-v-sizo-do-1-sentyabrya',
+        'https://avtonom.org/news/v-moskve-proydet-vecher-podderzhki-antivoennyh-politzaklyuchennyh',
+        'https://avtonom.org/news/sposobno-li-chelovechestvo-na-samozashchitu-trendy-poryadka-i-haosa-epizod-65-31-iyulya',
+        'https://avtonom.org/blog/belarus-anarhisty-osuzhdennye-po-delu-promnya-god-v-zaklyuchenii',
+        'https://avtonom.org/news/delo-o-diskreditacii-armii-protiv-evgeniya-karakasheva-prekrashcheno-za-istecheniem-sroka',
+        'https://avtonom.org/news/kanskogo-podrostka-nikitu-uvarova-etapirovali-v-vospitatelnuyu-koloniyu',
+        'https://avtonom.org/pages/samaya-interesnaya-strana-v-mire-blic-intervyu-s-tureckim-anarhistom',
+        'https://avtonom.org/news/podelnika-tesaka-prigovorili-k-16-godam-po-delu-o-kazni-v-lesu-1',
+        'https://avtonom.org/news/evgeniya-karakasheva-prodolzhat-sudit-za-diskreditaciyu-armii',
+        'https://avtonom.org/news/sud-v-sankt-peterburge-rassmotrit-prodlenie-aresta-dlya-aleksandry-skochilenko',
+        'https://avtonom.org/news/kinoklub-v-klube-im-dzherri-rubina-chto-v-vozduhe',
+        'https://avtonom.org/news/poroshok-v-shestyorenki-sistemy-trendy-poryadka-i-haosa-epizod-64-24-iyulya',
+        'https://avtonom.org/news/sud-ostavil-dmitriya-ivanova-v-sizo-do-2-sentyabrya',
+        'https://avtonom.org/news/roskomnadzor-razblokiroval-sayt-tor-project',
+        'https://avtonom.org/news/podderzhka-politzaklyuchennyh-vecher-otkrytok-v-moskve-i-festival-v-sankt-peterburge',
+        'https://avtonom.org/news/petr-ryabov-rossiyskie-anarhisty-v-2000-2015-godah',
+        'https://avtonom.org/news/mosgorsud-ostavil-dmitriya-ivanova-v-sizo-0',
+    ]
+
+    links = []
+    rss.process_new_items(db, lambda item: links.append(item.link))
+    assert links == [
+        'https://avtonom.org/news/kirillu-ukraincevu-prodlen-arest',
+    ]
+
+    links = []
+    rss.process_new_items(db, lambda item: links.append(item.link))
+    assert links == []
 
 
 def test_item_to_html():
