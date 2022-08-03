@@ -7,6 +7,6 @@ setup(
     packages = ['',],
     package_dir = {'': 'src'},
     install_requires = [
-        'pytest',
+        'requests',
     ],
 )
