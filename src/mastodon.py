@@ -20,5 +20,5 @@ def post_media(session, media_url):
 def publish(session, content, media):
     media_ids = [post_media(session, url) for url in media]
     r = session.do('post', 'api/v1/statuses',
-                   data=dict(status=content, content_type='text/html', media_ids=media_ids))
+                   json=dict(status=content, content_type='text/html', media_ids=media_ids))
     return r['id']
