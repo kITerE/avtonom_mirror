@@ -15,7 +15,4 @@ def run():
 
     with dbm.open(args.db, 'c') as db:
         session = Session(args.server_url, args.token)
-        def _publish(item):
-            toot_id = mastodon.publish(session, rss.item_to_html(item), item.media)
-            print('Item %s -> toot %s', item, toot_id)
-        rss.process_new_items(db, _publish)
+        rss.process_new_items(db, lambda item: mastodon.publish(session, rss.item_to_html(item), item.media))
