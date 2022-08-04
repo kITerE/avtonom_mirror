@@ -41,7 +41,7 @@ def process_new_items(db, fn):
                 traceback.print_exception(exc_type, exc_value, exc_traceback, file=sys.stdout)
                 print(item)
             else:
-                db[item.link] = True
+                db[item.link] = '1'
 
 
 def item_to_html(item):
