@@ -32,7 +32,7 @@ def iterate_items():
 
 
 def process_new_items(db, fn):
-    for item in iterate_items():
+    for item in reversed(list(iterate_items())):
         if not db.get(item.link):
             try:
                 fn(item)

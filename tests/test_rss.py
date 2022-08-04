@@ -104,8 +104,8 @@ def test_process_new_items(get_raw_mock):
     links = []
     rss.process_new_items(db, lambda item: links.append(item.link))
     assert links == [
-        'https://avtonom.org/news/poka-vse-ne-budut-svobodny-mezhdunarodnaya-nedelya-solidarnosti-s-zaklyuchennymi-anarhistami-23',
         'https://avtonom.org/news/petr-ryabov-rossiyskie-anarhisty-v-2000-2015-godah',
+        'https://avtonom.org/news/poka-vse-ne-budut-svobodny-mezhdunarodnaya-nedelya-solidarnosti-s-zaklyuchennymi-anarhistami-23',
     ]
 
 
@@ -119,7 +119,7 @@ def test_process_new_items_exception(get_raw_mock):
         links.append(item.link)
     rss.process_new_items(db, _do)
 
-    assert links == [
+    assert list(reversed(links)) == [
         'https://avtonom.org/news/poka-vse-ne-budut-svobodny-mezhdunarodnaya-nedelya-solidarnosti-s-zaklyuchennymi-anarhistami-23',
         'https://avtonom.org/freenews/achk-bristol-rip-teylor-yarost-nashe-oruzhie',
         'https://avtonom.org/news/aleksandra-skochilenko-ostanetsya-v-sizo-do-1-sentyabrya',
