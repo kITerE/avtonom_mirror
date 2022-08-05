@@ -1,10 +1,8 @@
 ![avtonom](img/logo_225x225.png)
 
-# Repost [avtonom.org](https://avtonom.org/) to Mastodon/Pleroma
+# Repost [avtonom.org](https://avtonom.org/) to Pleroma: [@avtonom\_mirror@to.any-key.press](https://to.any-key.press/avtonom_mirror)
 
-Bot instance: [@avtonom\_mirror@to.any-key.press](https://to.any-key.press/avtonom_mirror)
-
-## Tests
+## Run tests
 
 ```
 $ pip install pytest requests_mock
